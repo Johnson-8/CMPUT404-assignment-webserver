@@ -52,34 +52,28 @@ class MyWebServer(socketserver.BaseRequestHandler):
             encode_and_send(self.request, self.response)
 
         else:
-            if self.req1[1] == '/':
-                self.i = open("www/index.html", "r")
-                self.i = self.i.read()
+            if self.req1[1][-1] == '/':
+                self.file_dir = self.req1[1] + 'index.html'
+            else:
+                self.file_dir = self.req1[1]
+
+            self.file_dir = 'www' + self.file_dir
+
+            if exists(self.file_dir):
+                self.file = open(self.file_dir, 'r')
+                self.file = self.file.read()
                 self.response = ''
                 self.response += 'HTTP/1.1 200 OK\r\n'  #  status response
-                self.response += 'Content-Type: text/html;\r\n'  # content HTML
-                self.response += self.i + '\r\n'
+                self.response += 'Content-Type: text/html;'  # content HTML
+                self.response += self.file + '\r\n'
                 encode_and_send(self.request, self.response)
 
             else:
-                self.file_dir = self.req1[1]
-                self.file_dir = 'www' + self.file_dir
-
-                if exists(self.file_dir):
-                    self.file = open(self.file_dir, 'r')
-                    self.file = self.file.read()
-                    self.response = ''
-                    self.response += 'HTTP/1.1 200 OK\r\n'  #  status response
-                    self.response += 'Content-Type: text/html;'  # content HTML
-                    self.response += self.file + '\r\n'
-                    encode_and_send(self.request, self.response)
-
-                else:
-                    self.response = ''
-                    self.response += 'HTTP/1.1 404 Not Found\r\n'
-                    self.response += 'Content-Type: text/html;\r\n'
-                    self.response += 'you put in a no no link'
-                    encode_and_send(self.request, self.response)
+                self.response = ''
+                self.response += 'HTTP/1.1 404 Not Found\r\n'
+                self.response += 'Content-Type: text/html;\r\n'
+                self.response += 'you put in a no no link'
+                encode_and_send(self.request, self.response)
                     
 
 if __name__ == "__main__":
